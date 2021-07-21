@@ -7,7 +7,11 @@ const imageUrl = {
 };
 class Square extends React.Component {
   render() {
-    const imageName = this.props.value ? "show" : "";
+    var imageName = this.props.value ? "show" : "";
+    if (this.props.stop === true) {
+      imageName = imageUrl.notShow;
+    }
+
     return (
       <button className="square-" onClick={() => this.props.onClick()}>
         {/* {this.props.value} */}

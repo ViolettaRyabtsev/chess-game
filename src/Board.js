@@ -6,25 +6,32 @@ class Board extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      squares: Array(16).fill(null),
+      squares: Array(16).fill(0),
       showQueen: false,
       result: true,
+      times: 0,
+      stop: false,
     };
   }
-
   handleClick = (i) => {
     const updatedSquares = this.state.squares.slice();
-    updatedSquares[i] = true;
+    updatedSquares[i] = 1;
     this.setState({
       squares: updatedSquares,
+      times: this.state.times + 1,
     });
+    if (this.state.times === 4) {
+      this.setState({
+        stop: true,
+      });
+    }
   };
-
   generateSquare = (i) => {
     return (
       <Square
         value={this.state.squares[i]}
         onClick={() => this.handleClick(i)}
+        stop={this.state.stop}
       />
     );
   };
@@ -54,11 +61,72 @@ class Board extends React.Component {
     return true;
   };
 
+  checkVerticalSquares = () => {
+    const sliced1 = this.state.squares.slice(0, 4);
+    const sliced2 = this.state.squares.slice(4, 8);
+    const sliced3 = this.state.squares.slice(8, 12);
+    const sliced4 = this.state.squares.slice(12);
+
+    const firstVertical = sliced1[0] + sliced2[0] + sliced3[0] + sliced4[0];
+    const secondVertical = sliced1[1] + sliced2[1] + sliced3[1] + sliced4[1];
+    const thirdVertical = sliced1[2] + sliced2[2] + sliced3[2] + sliced4[2];
+    const fourthVertical = sliced1[3] + sliced2[3] + sliced3[3] + sliced4[3];
+
+    if (
+      firstVertical > 1 ||
+      secondVertical > 1 ||
+      thirdVertical > 1 ||
+      fourthVertical > 1
+    ) {
+      return "wrong";
+    }
+  };
+  diagonalLeft = () => {
+    let arr = [];
+    for (let i = 0; i < this.state.squares.length; i++) {
+      if (i <= 10) {
+        var pair = this.state.squares[i] + this.state.squares[i + 5];
+        arr.push(pair);
+      } else {
+        arr.push(this.state.squares[i]);
+      }
+    }
+    for (var y = 0; y < arr.length; y++) {
+      if (arr[y] + arr[y + 5] >= 3) {
+        console.log("wrong");
+      }
+    }
+  };
+  diagonalRight = () => {
+    let arr2 = [];
+    for (var i = this.state.squares.length - 1; i >= 0; i--) {
+      if (i >= 5) {
+        var pair = this.state.squares[i] + this.state.squares[i - 3];
+        arr2.push(pair);
+      } else {
+        arr2.push(this.state.squares[i]);
+      }
+    }
+    for (var y = 0; y < arr2.length; y++) {
+      if (arr2[y] + arr2[y + 3] >= 3) {
+        console.log("wrong");
+      }
+    }
+    console.log(arr2, "right");
+  };
+
   render() {
     const result = this.checkHorizontalSquares();
+    console.log(this.state.times, "times");
+    const vertical = this.checkVerticalSquares();
     console.log(result, "result");
+    //const diognalLeft = this.diagonalLeft();
+    const diognalRight = this.diagonalRight();
+
+    console.log(diognalRight);
     return (
       <div className={this.checkHorizontalSquares() ? "board-view" : "wrong"}>
+        {vertical}
         <div>
           {this.generateSquare(0)}
           {this.generateSquare(1)}
