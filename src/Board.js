@@ -1,6 +1,17 @@
 import React from "react";
 import "./App.css";
 import Square from "./Square";
+import Lost from "./Lost";
+import Winner from "./Winner";
+
+const initialState = {
+  squares: Array(16).fill(0),
+  showQueen: false,
+  result: true,
+  times: 0,
+  showLostFunction: false,
+  showModal: true,
+};
 
 class Board extends React.Component {
   constructor(props) {
@@ -10,7 +21,8 @@ class Board extends React.Component {
       showQueen: false,
       result: true,
       times: 0,
-      stop: false,
+      showLostFunction: false,
+      showModal: true,
     };
   }
   handleClick = (i) => {
@@ -20,10 +32,14 @@ class Board extends React.Component {
       squares: updatedSquares,
       times: this.state.times + 1,
     });
-    if (this.state.times === 4) {
+    if (this.state.times === 3) {
       this.setState({
-        stop: true,
+        showLostFunction: true,
       });
+    }
+
+    if (this.state.showLostFunction === true) {
+      updatedSquares[i] = 0;
     }
   };
   generateSquare = (i) => {
@@ -31,7 +47,7 @@ class Board extends React.Component {
       <Square
         value={this.state.squares[i]}
         onClick={() => this.handleClick(i)}
-        stop={this.state.stop}
+        lost={this.state.showLostFunction}
       />
     );
   };
@@ -78,8 +94,9 @@ class Board extends React.Component {
       thirdVertical > 1 ||
       fourthVertical > 1
     ) {
-      return "wrong";
+      return false;
     }
+    return true;
   };
   diagonalLeft = () => {
     let arr = [];
@@ -93,9 +110,10 @@ class Board extends React.Component {
     }
     for (var y = 0; y < arr.length; y++) {
       if (arr[y] + arr[y + 5] >= 3) {
-        console.log("wrong");
+        return false;
       }
     }
+    return true;
   };
   diagonalRight = () => {
     let arr2 = [];
@@ -109,24 +127,66 @@ class Board extends React.Component {
     }
     for (var y = 0; y < arr2.length; y++) {
       if (arr2[y] + arr2[y + 3] >= 3) {
-        console.log("wrong");
+        return false;
       }
     }
-    console.log(arr2, "right");
+    return true;
+  };
+
+  checkAllBoard = () => {
+    const horisontal = this.checkHorizontalSquares();
+    const vertical = this.checkVerticalSquares();
+    const diognalLeft = this.diagonalLeft();
+    const diognalRight = this.diagonalRight();
+
+    if (
+      horisontal === false ||
+      vertical === false ||
+      diognalLeft === false ||
+      diognalRight === false
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  showLost = (boolean) => {
+    const result = this.checkAllBoard();
+    if (result === false) {
+      return (
+        <Lost
+          show={this.state.showModal}
+          handleClose={() =>
+            this.setState({
+              ...this.state,
+              showModal: false || initialState.showModal,
+              squares: initialState.squares,
+              showQueen: initialState.showQueen,
+              result: initialState.result,
+              times: initialState.times,
+              showLostFunction: initialState.showLostFunction,
+            })
+          }
+        />
+      );
+    } else if (boolean && result === true) {
+      return (
+        <Winner
+          show={this.state.showModal}
+          handleClose={() =>
+            this.setState({
+              ...this.state,
+              showModal: false,
+            })
+          }
+        />
+      );
+    }
   };
 
   render() {
-    const result = this.checkHorizontalSquares();
-    console.log(this.state.times, "times");
-    const vertical = this.checkVerticalSquares();
-    console.log(result, "result");
-    //const diognalLeft = this.diagonalLeft();
-    const diognalRight = this.diagonalRight();
-
-    console.log(diognalRight);
     return (
-      <div className={this.checkHorizontalSquares() ? "board-view" : "wrong"}>
-        {vertical}
+      <div className={this.checkAllBoard() ? "board-view" : "wrong"}>
         <div>
           {this.generateSquare(0)}
           {this.generateSquare(1)}
@@ -151,6 +211,7 @@ class Board extends React.Component {
           {this.generateSquare(14)}
           {this.generateSquare(15)}
         </div>
+        {this.showLost(this.state.showLostFunction)}
       </div>
     );
   }
