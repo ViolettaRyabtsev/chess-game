@@ -23,6 +23,8 @@ class Board extends React.Component {
       times: 0,
       showLostFunction: false,
       showModal: true,
+      countLost: 0,
+      countWin: 0,
     };
   }
   handleClick = (i) => {
@@ -165,6 +167,7 @@ class Board extends React.Component {
               result: initialState.result,
               times: initialState.times,
               showLostFunction: initialState.showLostFunction,
+              countLost: this.state.countLost + 1,
             })
           }
         />
@@ -173,10 +176,11 @@ class Board extends React.Component {
       return (
         <Winner
           show={this.state.showModal}
-          handleClose={() =>
+          handleCloseWinner={() =>
             this.setState({
               ...this.state,
               showModal: false,
+              countWin: this.state.countWin + 1,
             })
           }
         />
@@ -186,32 +190,37 @@ class Board extends React.Component {
 
   render() {
     return (
-      <div className={this.checkAllBoard() ? "board-view" : "wrong"}>
-        <div>
-          {this.generateSquare(0)}
-          {this.generateSquare(1)}
-          {this.generateSquare(2)}
-          {this.generateSquare(3)}
+      <div className="main-app">
+        <div className={this.checkAllBoard() ? "board-view" : "wrong"}>
+          <div>
+            {this.generateSquare(0)}
+            {this.generateSquare(1)}
+            {this.generateSquare(2)}
+            {this.generateSquare(3)}
+          </div>
+          <div>
+            {this.generateSquare(4)}
+            {this.generateSquare(5)}
+            {this.generateSquare(6)}
+            {this.generateSquare(7)}
+          </div>
+          <div>
+            {this.generateSquare(8)}
+            {this.generateSquare(9)}
+            {this.generateSquare(10)}
+            {this.generateSquare(11)}
+          </div>
+          <div>
+            {this.generateSquare(12)}
+            {this.generateSquare(13)}
+            {this.generateSquare(14)}
+            {this.generateSquare(15)}
+          </div>
+          {this.showLost(this.state.showLostFunction)}
         </div>
-        <div>
-          {this.generateSquare(4)}
-          {this.generateSquare(5)}
-          {this.generateSquare(6)}
-          {this.generateSquare(7)}
+        <div className="who-is-win">
+          Player(x) Win : {this.state.countWin} Lost : {this.state.countLost}
         </div>
-        <div>
-          {this.generateSquare(8)}
-          {this.generateSquare(9)}
-          {this.generateSquare(10)}
-          {this.generateSquare(11)}
-        </div>
-        <div>
-          {this.generateSquare(12)}
-          {this.generateSquare(13)}
-          {this.generateSquare(14)}
-          {this.generateSquare(15)}
-        </div>
-        {this.showLost(this.state.showLostFunction)}
       </div>
     );
   }
