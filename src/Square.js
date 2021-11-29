@@ -9,7 +9,11 @@ class Square extends React.Component {
   render() {
     var imageName = this.props.value ? "show" : "notShow";
     return (
-      <button className="square" onClick={() => this.props.onClick()}>
+      <button
+        role="dialog"
+        className="square"
+        onClick={() => this.props.onClick()}
+      >
         {this.props.value ? (
           <img
             className={imageName}

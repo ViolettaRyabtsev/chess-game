@@ -179,13 +179,19 @@ class Board extends React.Component {
           handleCloseWinner={() =>
             this.setState({
               ...this.state,
-              showModal: false,
+              showModal: false || initialState.showModal,
               countWin: this.state.countWin + 1,
+              squares: initialState.squares,
+              showQueen: initialState.showQueen,
+              result: initialState.result,
+              times: initialState.times,
+              showLostFunction: initialState.showLostFunction,
             })
           }
         />
       );
     }
+    console.log(this.state.squares, "squares after winner");
   };
 
   render() {
